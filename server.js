@@ -1,45 +1,30 @@
+// ═══════════════════════════════════════════════════
+//  MediBuddy Backend — Enhanced v2.0
+//  New: Forgot Password, Payment Recording, Sessions
+// ═══════════════════════════════════════════════════
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { initDB } = require('./db/database');
-
-// Route imports
-const authRoutes = require('./routes/auth');
-const patientRoutes = require('./routes/patient');
-const doctorRoutes = require('./routes/doctor');
-const searchRoutes = require('./routes/search');
-const reportRoutes = require('./routes/report');
-
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors({ origin: '*', credentials: true }));
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/reports', express.static(path.join(__dirname, 'generated_reports')));
+app.use(express.static('.'));
 
-// Initialize DB then start server
-initDB().then(() => {
-  // Routes
-  app.use('/api/auth', authRoutes);
-  app.use('/api/patient', patientRoutes);
-  app.use('/api/doctor', doctorRoutes);
-  app.use('/api/search', searchRoutes);
-  app.use('/api/report', reportRoutes);
+// ── ROUTES ──
+app.use('/api/auth',    require('./routes/auth'));
+app.use('/api/patient', require('./routes/patient'));
+app.use('/api/doctor',  require('./routes/doctor'));
+app.use('/api/search',  require('./routes/search'));
+app.use('/api/report',  require('./routes/report'));
 
-  // Health check
-  app.get('/', (req, res) => {
-    res.json({ message: 'MediBuddy API is running 🏥', version: '1.0.0' });
-  });
+// NEW: Payment route
+app.use('/api/payment', require('./routes/payment'));
 
-  app.listen(PORT, () => {
-    console.log(`\n🏥 MediBuddy Backend running on http://localhost:${PORT}`);
-    console.log(`📋 API Docs available at http://localhost:${PORT}/api-info\n`);
-  });
-}).catch(err => {
-  console.error('Failed to initialize database:', err);
-  process.exit(1);
+// Serve frontend
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-module.exports = app;
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`MediBuddy running on http://localhost:${PORT}`));
