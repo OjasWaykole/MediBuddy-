@@ -832,11 +832,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 <!-- ═══════════════ SCRIPTS ═══════════════ -->
 <script>
 // ── CONFIG ──
-const API = (() => {
-  const host = window.location.hostname;
-  if (host === 'localhost' || host === '127.0.0.1') return 'http://localhost:5000/api';
-  return '/api'; // Vercel uses same-origin API routes
-})();
+const API = "https://medibuddy-production.up.railway.app/api";
 
 let currentUser = null;
 let authToken = null;
