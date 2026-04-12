@@ -1,0 +1,4 @@
+﻿node_modules/
+medibuddy.db
+generated_reports/
+*.db
